@@ -21,11 +21,15 @@
 
   /* Smaller rectangle */
   .app{
-    width: 300px;              /* <-- smaller presence */
-    padding: 12px 12px 14px;   /* tighter */
+    width: 300px;
+    height: 300px;
+    padding: 10px;
     background: rgba(17,26,46,.75);
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,.10);
+  
+    display: flex;
+    flex-direction: column;
   }
 
   header{
@@ -33,11 +37,11 @@
     justify-content:space-between;
     align-items:center;
     gap:10px;
-    margin-bottom:8px;
+    margin-bottom:6px;
   }
   h1{
     margin:0;
-    font-size:14px;            /* smaller title */
+    font-size:13px;            /* smaller title */
     font-weight:700;
     letter-spacing:.2px;
   }
@@ -46,11 +50,11 @@
     border: 1px solid rgba(255,255,255,.10);
     background: rgba(255,255,255,.06);
     color: var(--text);
-    padding: 6px 8px;          /* smaller buttons */
+    padding: 5px 7px;          /* smaller buttons */
     border-radius: 10px;
     cursor:pointer;
     font-weight:650;
-    font-size: 12px;
+    font-size: 11px;
   }
   button:hover{ background: rgba(255,255,255,.10); }
 
@@ -58,8 +62,8 @@
   .dow, .days{
     display:grid;
     grid-template-columns: repeat(7, 1fr);
-    column-gap: 8px;
-    row-gap: 6px;
+    column-gap: 7px;
+    row-gap: 5px;
   }
   .dow{
     color: var(--muted);
@@ -72,7 +76,7 @@
     text-align:center;
     font-size: 12px;           /* smaller numbers */
     line-height: 1;
-    padding: 4px 0;            /* tighter spacing */
+    padding: 3px 0;            /* tighter spacing */
     border-radius: 8px;
   }
   .muted{ opacity: .35; }
@@ -81,9 +85,9 @@
     font-weight: 750;
   }
   .hint{
-    margin-top: 10px;
+    margin-top: 6px;
     color: var(--muted);
-    font-size: 11px;
+    font-size: 10px;
   }
   </style>
 </head>
