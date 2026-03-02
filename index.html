@@ -27,13 +27,13 @@
       place-items:center;
       background: radial-gradient(1200px 700px at 20% 0%, #17264a 0%, var(--bg) 48%, #050812 100%);
       color:var(--text);
-      padding:12px;
+      padding:0;
     }
 
     /* 300x300 square card */
     .card{
-      width:300px;
-      height:210px;
+      width:280px;
+      height:196px;
       border-radius:22px;
       border:1px solid var(--border);
       background:
@@ -41,11 +41,11 @@
         linear-gradient(180deg, rgba(255,255,255,.06), transparent 35%),
         linear-gradient(180deg, var(--card), var(--card2));
       box-shadow: 0 16px 38px rgba(0,0,0,.45);
-      padding:10px;
+      padding:6px;
       box-sizing:border-box;
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:6px;
     }
 
     .top{
@@ -56,7 +56,7 @@
     }
 
     .month{
-      font-size:13px;
+      font-size:12px;
       font-weight:750;
       letter-spacing:.2px;
       white-space:nowrap;
@@ -73,7 +73,7 @@
       background:var(--btn);
       color:var(--text);
       border-radius:14px;
-      height:20px;
+      height:18px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -81,14 +81,14 @@
       user-select:none;
     }
     .iconBtn{
-      width:34px;
-      font-size:12px;
+      width:30px;
+      font-size:11px;
       line-height:1;
     }
     .todayBtn{
-      padding:0 12px;
+      padding:0 10px;
       font-weight:700;
-      font-size:10px;
+      font-size:9px;
     }
     .iconBtn:hover, .todayBtn:hover{ background:var(--btnHover); }
 
@@ -107,7 +107,7 @@
     .days{
       display:grid;
       grid-template-columns:repeat(7,1fr);
-      row-gap:10px;
+      row-gap:8px;
       column-gap:0;
       padding:0 2px;
       flex:1;
