@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monthly Calendar</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #111a2e;
+      --text: #e6edf7;
+      --muted: #9fb0cc;
+      --border: rgba(255,255,255,.10);
+      --accent: #6aa6ff;
+      --today: rgba(106,166,255,.22);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 700px at 20% 0%, #17264a 0%, var(--bg) 45%, #070b14 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .app {
+      width: min(980px, 100%);
+      background: color-mix(in oklab, var(--card) 92%, black 8%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .title {
+      display: grid;
+      gap: 2px;
+    }
+    .title h1 {
+      font-size: 18px;
+      margin: 0;
+      font-weight: 650;
+      letter-spacing: .2px;
+    }
+    .title .sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .06s ease, background .15s ease;
+    }
+    button:hover { background: rgba(255,255,255,.10); }
+    button:active { transform: translateY(1px); }
+    button.primary {
+      border-color: rgba(106,166,255,.45);
+      background: rgba(106,166,255,.12);
+    }
+
+    .grid {
+      padding: 16px 18px 18px;
+      display: grid;
+      gap: 10px;
+    }
+    .dow {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      padding: 2px 2px 0;
+    }
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .cell {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      min-height: 92px;
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cell.muted {
+      opacity: .42;
+    }
+    .cell.today {
+      border-color: rgba(106,166,255,.55);
+      background: var(--today);
+    }
+    .date {
+      font-weight: 750;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.12);
+    }
+    .hint {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    footer {
+      padding: 12px 18px 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">
+        <h1 id="monthLabel">Month YYYY</h1>
+        <div class="sub" id="rangeLabel">Sunday–Saturday</div>
+      </div>
+      <div class="controls">
+        <button id="prevBtn" aria-label="Previous month">←</button>
+        <button id="todayBtn" class="primary">Today</button>
+        <button id="nextBtn" aria-label="Next month">→</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="dow" id="dowRow"></div>
+      <div class="days" id="daysGrid"></div>
+    </div>
+
+    <footer>
+      <div>Monthly calendar (static HTML/CSS/JS) — perfect for GitHub Pages.</div>
+      <div>Tip: click a day later to add events (optional enhancement).</div>
+    </footer>
+  </div>
+
+  <script>
+    // ---- Settings ----
+    const WEEK_START = 0; // 0 = Sunday, 1 = Monday
+    const DOW_LABELS_SUN = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const DOW_LABELS_MON = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+    // ---- State ----
+    let view = new Date(); // current displayed month
+    view.setDate(1);
+
+    // ---- DOM ----
+    const monthLabel = document.getElementById("monthLabel");
+    const rangeLabel = document.getElementById("rangeLabel");
+    const dowRow = document.getElementById("dowRow");
+    const daysGrid = document.getElementById("daysGrid");
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+      render();
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      render();
+    });
+    document.getElementById("todayBtn").addEventListener("click", () => {
+      const t = new Date();
+      view = new Date(t.getFullYear(), t.getMonth(), 1);
+      render();
+    });
+
+    function monthName(d) {
+      return d.toLocaleString(undefined, { month: "long", year: "numeric" });
+    }
+
+    function sameDay(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    function shiftDowLabels() {
+      const labels = WEEK_START === 1 ? DOW_LABELS_MON : DOW_LABELS_SUN;
+      dowRow.innerHTML = "";
+      labels.forEach(l => {
+        const el = document.createElement("div");
+        el.textContent = l;
+        dowRow.appendChild(el);
+      });
+      rangeLabel.textContent = WEEK_START === 1 ? "Monday–Sunday" : "Sunday–Saturday";
+    }
+
+    function startOfGrid(monthFirst) {
+      // monthFirst is first day of the month.
+      // We need the first cell date of the calendar grid.
+      const dow = monthFirst.getDay(); // 0-6 Sun-Sat
+      const offset = (dow - WEEK_START + 7) % 7;
+      return new Date(monthFirst.getFullYear(), monthFirst.getMonth(), 1 - offset);
+    }
+
+    function render() {
+      shiftDowLabels();
+      monthLabel.textContent = monthName(view);
+
+      const today = new Date();
+      const first = new Date(view.getFullYear(), view.getMonth(), 1);
+      const gridStart = startOfGrid(first);
+
+      daysGrid.innerHTML = "";
+
+      // 6 rows x 7 days = 42 cells (covers all months nicely)
+      for (let i = 0; i < 42; i++) {
+        const d = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+
+        const cell = document.createElement("div");
+        cell.className = "cell";
+
+        const inCurrentMonth = d.getMonth() === view.getMonth();
+        if (!inCurrentMonth) cell.classList.add("muted");
+        if (sameDay(d, today)) cell.classList.add("today");
+
+        const top = document.createElement("div");
+        top.className = "date";
+
+        const num = document.createElement("div");
+        num.textContent = d.getDate();
+
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = inCurrentMonth ? "This month" : "Other";
+
+        top.appendChild(num);
+        top.appendChild(badge);
+
+        const hint = document.createElement("div");
+        hint.className = "hint";
+        hint.textContent = "Add notes/events later (optional).";
+
+        cell.appendChild(top);
+        cell.appendChild(hint);
+
+        daysGrid.appendChild(cell);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
