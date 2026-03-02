@@ -2,182 +2,261 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simple Monthly Calendar</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Square Calendar</title>
   <style>
-  :root{
-    --bg:#0b1220; --text:#e6edf7; --muted:#9fb0cc; --accent:#6aa6ff;
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-  }
-  body{
-    margin:0;
-    min-height:100vh;
-    display:grid;
-    place-items:center;
-    padding:18px;
-    color:var(--text);
-    background: radial-gradient(1200px 700px at 20% 0%, #17264a 0%, var(--bg) 45%, #070b14 100%);
-  }
+    :root{
+      --bg:#070b14;
+      --card:#0f1a2f;
+      --card2:#0b1426;
+      --text:#eaf1ff;
+      --muted:#91a1bf;
+      --muted2:rgba(234,241,255,.35);
+      --border:rgba(255,255,255,.12);
+      --btn:rgba(255,255,255,.08);
+      --btnHover:rgba(255,255,255,.12);
+      --pill:rgba(90,140,255,.25);
+      --pillBorder:rgba(120,170,255,.45);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
 
-  /* Smaller rectangle */
-  .app{
-    width: 300px;
-    height: 300px;
-    padding: 10px;
-    background: rgba(17,26,46,.75);
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.10);
-  
-    display: flex;
-    flex-direction: column;
-  }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(1200px 700px at 20% 0%, #17264a 0%, var(--bg) 48%, #050812 100%);
+      color:var(--text);
+      padding:18px;
+    }
 
-  header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-bottom:6px;
-  }
-  h1{
-    margin:0;
-    font-size:13px;            /* smaller title */
-    font-weight:700;
-    letter-spacing:.2px;
-  }
-  .controls{ display:flex; gap:6px; }
-  button{
-    border: 1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.06);
-    color: var(--text);
-    padding: 5px 7px;          /* smaller buttons */
-    border-radius: 10px;
-    cursor:pointer;
-    font-weight:650;
-    font-size: 11px;
-  }
-  button:hover{ background: rgba(255,255,255,.10); }
+    /* 300x300 square card */
+    .card{
+      width:300px;
+      height:300px;
+      border-radius:22px;
+      border:1px solid var(--border);
+      background:
+        radial-gradient(260px 120px at 15% 0%, rgba(255,255,255,.10), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 35%),
+        linear-gradient(180deg, var(--card), var(--card2));
+      box-shadow: 0 16px 38px rgba(0,0,0,.45);
+      padding:14px;
+      box-sizing:border-box;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
 
-  /* Simple “no grid box” layout, tighter */
-  .dow, .days{
-    display:grid;
-    grid-template-columns: repeat(7, 1fr);
-    column-gap: 7px;
-    row-gap: 5px;
-  }
-  .dow{
-    color: var(--muted);
-    font-size: 10px;           /* smaller weekdays */
-    letter-spacing: .5px;
-    text-transform: uppercase;
-    margin: 6px 0 6px;
-  }
-  .day{
-    text-align:center;
-    font-size: 12px;           /* smaller numbers */
-    line-height: 1;
-    padding: 3px 0;            /* tighter spacing */
-    border-radius: 8px;
-  }
-  .muted{ opacity: .35; }
-  .today{
-    background: rgba(106,166,255,.18);
-    font-weight: 750;
-  }
-  .hint{
-    margin-top: 6px;
-    color: var(--muted);
-    font-size: 10px;
-  }
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .month{
+      font-size:18px;
+      font-weight:750;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+
+    .controls{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .iconBtn, .todayBtn{
+      border:1px solid rgba(255,255,255,.10);
+      background:var(--btn);
+      color:var(--text);
+      border-radius:14px;
+      height:34px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .iconBtn{
+      width:34px;
+      font-size:16px;
+      line-height:1;
+    }
+    .todayBtn{
+      padding:0 12px;
+      font-weight:700;
+      font-size:14px;
+    }
+    .iconBtn:hover, .todayBtn:hover{ background:var(--btnHover); }
+
+    .dow{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:0;
+      padding:0 2px;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+    .dow div{ text-align:center; }
+
+    .days{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      row-gap:10px;
+      column-gap:0;
+      padding:0 2px;
+      flex:1;
+      align-content:start;
+    }
+
+    /* number-only cell */
+    .day{
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:650;
+      color:var(--text);
+      border-radius:999px; /* for pill highlight */
+    }
+    .other{
+      color:var(--muted2);
+      font-weight:600;
+    }
+    .selected{
+      background:var(--pill);
+      border:1px solid var(--pillBorder);
+      box-sizing:border-box;
+    }
   </style>
 </head>
 
 <body>
-  <div class="app">
-    <header>
-      <h1 id="monthLabel">Month YYYY</h1>
+  <div class="card">
+    <div class="top">
+      <div class="month" id="monthLabel">March 2026</div>
+
       <div class="controls">
-        <button id="prevBtn" aria-label="Previous month">←</button>
-        <button id="todayBtn">Today</button>
-        <button id="nextBtn" aria-label="Next month">→</button>
+        <button class="iconBtn" id="prevBtn" aria-label="Previous month">←</button>
+        <button class="todayBtn" id="todayBtn">Today</button>
+        <button class="iconBtn" id="nextBtn" aria-label="Next month">→</button>
       </div>
-    </header>
+    </div>
 
     <div class="dow" id="dowRow"></div>
-    <div class="days" id="daysRow"></div>
+    <div class="days" id="daysGrid"></div>
   </div>
 
   <script>
-    // Monday as first day of week
-    const WEEK_START = 1; // 1 = Monday
+    // Monday-first
+    const WEEK_START = 1; // 1=Mon
+    const DOW = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 
-    const DOW_LABELS_MON = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-
+    // State
     let view = new Date();
-    view.setDate(1);
+    view = new Date(view.getFullYear(), view.getMonth(), 1);
+
+    // Selected day (pill highlight). Default = today if it's in current view, else 1st.
+    let selected = null;
 
     const monthLabel = document.getElementById("monthLabel");
     const dowRow = document.getElementById("dowRow");
-    const daysRow = document.getElementById("daysRow");
+    const daysGrid = document.getElementById("daysGrid");
 
     document.getElementById("prevBtn").addEventListener("click", () => {
       view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
-      render();
-    });
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
-      render();
-    });
-    document.getElementById("todayBtn").addEventListener("click", () => {
-      const t = new Date();
-      view = new Date(t.getFullYear(), t.getMonth(), 1);
+      // keep selected in new month: set to 1
+      selected = new Date(view.getFullYear(), view.getMonth(), 1);
       render();
     });
 
-    function monthName(d) {
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      selected = new Date(view.getFullYear(), view.getMonth(), 1);
+      render();
+    });
+
+    document.getElementById("todayBtn").addEventListener("click", () => {
+      const t = new Date();
+      view = new Date(t.getFullYear(), t.getMonth(), 1);
+      selected = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+      render();
+    });
+
+    function sameDay(a, b){
+      return a && b &&
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate();
+    }
+
+    function monthName(d){
       return d.toLocaleString(undefined, { month: "long", year: "numeric" });
     }
-    function sameDay(a, b) {
-      return a.getFullYear() === b.getFullYear() &&
-             a.getMonth() === b.getMonth() &&
-             a.getDate() === b.getDate();
-    }
-    function startOfGrid(monthFirst) {
+
+    function startOfGrid(monthFirst){
       // monthFirst.getDay(): 0=Sun..6=Sat
       const dow = monthFirst.getDay();
       const offset = (dow - WEEK_START + 7) % 7;
       return new Date(monthFirst.getFullYear(), monthFirst.getMonth(), 1 - offset);
     }
 
-    function render() {
+    function render(){
       monthLabel.textContent = monthName(view);
 
       // Weekday header
       dowRow.innerHTML = "";
-      DOW_LABELS_MON.forEach(l => {
+      for (const label of DOW){
         const el = document.createElement("div");
-        el.textContent = l;
-        el.style.textAlign = "center";
+        el.textContent = label;
         dowRow.appendChild(el);
-      });
+      }
 
-      // Days (42 numbers)
-      const today = new Date();
+      // Default selected if none:
+      if (!selected){
+        const t = new Date();
+        if (t.getFullYear() === view.getFullYear() && t.getMonth() === view.getMonth()){
+          selected = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+        } else {
+          selected = new Date(view.getFullYear(), view.getMonth(), 1);
+        }
+      }
+
+      // Days (6 weeks = 42)
       const first = new Date(view.getFullYear(), view.getMonth(), 1);
       const gridStart = startOfGrid(first);
 
-      daysRow.innerHTML = "";
-      for (let i = 0; i < 42; i++) {
+      daysGrid.innerHTML = "";
+
+      for (let i = 0; i < 42; i++){
         const d = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
 
-        const el = document.createElement("div");
-        el.className = "day";
+        const cell = document.createElement("div");
+        cell.className = "day";
+        cell.textContent = d.getDate();
 
-        if (d.getMonth() !== view.getMonth()) el.classList.add("muted");
-        if (sameDay(d, today)) el.classList.add("today");
+        const inMonth = d.getMonth() === view.getMonth();
+        if (!inMonth) cell.classList.add("other");
 
-        el.textContent = d.getDate();
-        daysRow.appendChild(el);
+        if (sameDay(d, selected)) cell.classList.add("selected");
+
+        // Click to move pill highlight (like your screenshot)
+        cell.addEventListener("click", () => {
+          selected = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+          // if user clicks a day in previous/next month, switch view to that month
+          if (d.getMonth() !== view.getMonth() || d.getFullYear() !== view.getFullYear()){
+            view = new Date(d.getFullYear(), d.getMonth(), 1);
+          }
+          render();
+        });
+
+        daysGrid.appendChild(cell);
       }
     }
 
