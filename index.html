@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Monthly Calendar</title>
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e6edf7; --muted:#9fb0cc; --accent:#6aa6ff;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 0%, #17264a 0%, var(--bg) 45%, #070b14 100%);
+    }
+    .app{
+      width:min(720px, 100%);
+      padding:18px 18px 22px;
+      background: rgba(17,26,46,.75);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    h1{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .controls{ display:flex; gap:8px; }
+    button{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight:650;
+    }
+    button:hover{ background: rgba(255,255,255,.10); }
+
+    /* Simple “no grid box” layout */
+    .dow, .days{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      column-gap: 14px;
+      row-gap: 10px;
+    }
+    .dow{
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      margin: 8px 0 10px;
+    }
+    .day{
+      text-align:center;
+      font-size: 15px;
+      line-height: 1;
+      padding: 6px 0;      /* just spacing, not a box */
+      border-radius: 10px; /* only used for “today” highlight */
+    }
+    .muted{ opacity: .35; }
+    .today{
+      background: rgba(106,166,255,.18);
+      color: var(--text);
+      font-weight: 750;
+    }
+    .hint{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    a{ color: var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <h1 id="monthLabel">Month YYYY</h1>
+      <div class="controls">
+        <button id="prevBtn" aria-label="Previous month">←</button>
+        <button id="todayBtn">Today</button>
+        <button id="nextBtn" aria-label="Next month">→</button>
+      </div>
+    </header>
+
+    <div class="dow" id="dowRow"></div>
+    <div class="days" id="daysRow"></div>
+
+    <div class="hint">Monday-first. Simple numbers only.</div>
+  </div>
+
+  <script>
+    // Monday as first day of week
+    const WEEK_START = 1; // 1 = Monday
+
+    const DOW_LABELS_MON = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+    let view = new Date();
+    view.setDate(1);
+
+    const monthLabel = document.getElementById("monthLabel");
+    const dowRow = document.getElementById("dowRow");
+    const daysRow = document.getElementById("daysRow");
+
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+      render();
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+      render();
+    });
+    document.getElementById("todayBtn").addEventListener("click", () => {
+      const t = new Date();
+      view = new Date(t.getFullYear(), t.getMonth(), 1);
+      render();
+    });
+
+    function monthName(d) {
+      return d.toLocaleString(undefined, { month: "long", year: "numeric" });
+    }
+    function sameDay(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+    function startOfGrid(monthFirst) {
+      // monthFirst.getDay(): 0=Sun..6=Sat
+      const dow = monthFirst.getDay();
+      const offset = (dow - WEEK_START + 7) % 7;
+      return new Date(monthFirst.getFullYear(), monthFirst.getMonth(), 1 - offset);
+    }
+
+    function render() {
+      monthLabel.textContent = monthName(view);
+
+      // Weekday header
+      dowRow.innerHTML = "";
+      DOW_LABELS_MON.forEach(l => {
+        const el = document.createElement("div");
+        el.textContent = l;
+        el.style.textAlign = "center";
+        dowRow.appendChild(el);
+      });
+
+      // Days (42 numbers)
+      const today = new Date();
+      const first = new Date(view.getFullYear(), view.getMonth(), 1);
+      const gridStart = startOfGrid(first);
+
+      daysRow.innerHTML = "";
+      for (let i = 0; i < 42; i++) {
+        const d = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+
+        const el = document.createElement("div");
+        el.className = "day";
+
+        if (d.getMonth() !== view.getMonth()) el.classList.add("muted");
+        if (sameDay(d, today)) el.classList.add("today");
+
+        el.textContent = d.getDate();
+        daysRow.appendChild(el);
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
